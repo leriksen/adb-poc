@@ -1,0 +1,17 @@
+{
+  "all": {
+    "pypi": [
+      {
+        "package":"simplejson==3.8.0"
+      },
+      {
+        "package":"jmespath==1.0.1"
+      }
+    ],
+    "cran": [],
+    "jar": [],
+    "maven": [],
+    "whl": [],
+    "egg": []
+  }
+}

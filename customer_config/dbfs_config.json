@@ -1,0 +1,10 @@
+{
+  "master": {
+    "source": "dbfs_files/source1.txt",
+    "path": "/tmp/source1.txt"
+  },
+  "secondary": {
+    "source": "dbfs_files/source2.txt",
+    "path": "/tmp/source2.txt"
+  }
+}

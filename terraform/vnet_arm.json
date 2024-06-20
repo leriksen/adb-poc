@@ -1,0 +1,156 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnet_name": {
+      "type": "String"
+    },
+    "vnet_ip_range": {
+      "type": "String"
+    },
+    "subnet_public_ip_range": {
+      "type": "String"
+    },
+    "subnet_private_ip_range": {
+      "type": "String"
+    },
+    "subnet_pe_ip_range": {
+      "type": "String"
+    },
+    "nsg_private_externalid": {
+      "type": "String"
+    },
+    "nsg_public_externalid": {
+      "type": "String"
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2022-11-01",
+      "name": "[concat(parameters('vnet_name'), '/', parameters('vnet_name'), '_private')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnet_name'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('subnet_private_ip_range')]",
+        "networkSecurityGroup": {
+          "id": "[parameters('nsg_private_externalid')]"
+        },
+        "serviceEndpoints": [],
+        "delegations": [
+          {
+            "name": "delegation",
+            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_private')), '/delegations/delegation')]",
+            "properties": {
+              "serviceName": "Microsoft.Databricks/workspaces"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+          }
+        ],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2022-11-01",
+      "name": "[concat(parameters('vnet_name'), '/', parameters('vnet_name'), '_public')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnet_name'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[parameters('subnet_public_ip_range')]",
+        "networkSecurityGroup": {
+          "id": "[parameters('nsg_public_externalid')]"
+        },
+        "serviceEndpoints": [],
+        "delegations": [
+          {
+            "name": "delegation",
+            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_public')), '/delegations/delegation')]",
+            "properties": {
+              "serviceName": "Microsoft.Databricks/workspaces"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+          }
+        ],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2022-11-01",
+      "name": "[parameters('vnet_name')]",
+      "location": "australiasoutheast",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_private'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_public'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnet_ip_range')]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": []
+        },
+        "subnets": [
+          {
+            "name": "[concat(parameters('vnet_name'), '_private')]",
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_private'))]",
+            "properties": {
+              "addressPrefix": "192.168.0.128/25",
+              "networkSecurityGroup": {
+                "id": "[parameters('nsg_private_externalid')]"
+              },
+              "serviceEndpoints": [],
+              "delegations": [
+                {
+                  "name": "delegation",
+                  "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_private')), '/delegations/delegation')]",
+                  "properties": {
+                    "serviceName": "Microsoft.Databricks/workspaces"
+                  },
+                  "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                }
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          },
+          {
+            "name": "[concat(parameters('vnet_name'), '_public')]",
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_public'))]",
+            "properties": {
+              "addressPrefix": "192.168.0.0/25",
+              "networkSecurityGroup": {
+                "id": "[parameters('nsg_public_externalid')]"
+              },
+              "serviceEndpoints": [],
+              "delegations": [
+                {
+                  "name": "delegation",
+                  "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnet_name'), concat(parameters('vnet_name'), '_public')), '/delegations/delegation')]",
+                  "properties": {
+                    "serviceName": "Microsoft.Databricks/workspaces"
+                  },
+                  "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                }
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false
+      }
+    }
+  ]
+}

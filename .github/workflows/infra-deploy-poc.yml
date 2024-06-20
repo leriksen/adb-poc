@@ -1,0 +1,12 @@
+name: infra-deploy-poc
+run-name: Deploy ADB infrastructure to Azure
+on: [push]
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: bancolombia/checkout-azure-repo@v1
+        with:
+          token: xXyYzZ01?!
+          username: john_doe
+          repo_url: dev.azure.com/leiferiksenau/adb

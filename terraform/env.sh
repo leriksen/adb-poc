@@ -1,0 +1,10 @@
+export env="poc"
+export ARM_CLIENT_ID="0f592483-698d-4144-8a48-7b4f94b5526d"
+export ARM_CLIENT_SECRET="$(cat ../.key)"
+export ARM_TENANT_ID="4e5dff48-af2c-4e7e-a5fa-bb6560ec04b6"
+export ARM_SUBSCRIPTION_ID="743b758a-f6e7-4823-b706-950a64a6c9f9"
+export ARM_USE_MSI="true"
+export TF_VAR_env="${env}"
+export sa="leifterraform"
+
+../scripts/terraform_provider.sh -t "${ARM_TENANT_ID}" -s "${ARM_SUBSCRIPTION_ID}" -c "${ARM_CLIENT_ID}" -o "provider.tf"

@@ -1,0 +1,1 @@
+terraform init -backend-config="storage_account_name=${env}" -backend-config="container_name=terraform" -backend-config="key=${env}.tfstate" -backend-config="use_azuread_auth=true" -backend-config="subscription_id=${ARM_SUBSCRIPTION_ID} -backend-config="tenant_id=${ARM_TENANCY_ID}

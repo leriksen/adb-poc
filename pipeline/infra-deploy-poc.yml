@@ -1,0 +1,32 @@
+variables:
+  - group: terraform-base
+  - group: devops-base
+  - group: devops-non-prod
+  - group: devops-poc
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - main
+  paths:
+    include:
+      - pipelines/infra-deploy-poc.yml
+      - terraform/**/*
+      - modules/**/*
+      - scripts/terraform_*.sh
+stages:
+  - template: ./templates/plan.yml
+    parameters:
+      tf_creds: credentials.tfrc.json
+      tf_workspace: adb
+
+  - template: ./templates/apply.yml
+    parameters:
+      tf_creds: credentials.tfrc.json
+      tf_workspace: adb
+      environment: $(environment)

@@ -1,0 +1,74 @@
+parameters:
+  - name: tf_creds
+  - name: tf_workspace
+
+stages:
+  - stage: terraform_plan
+    displayName: Terraform Plan
+    jobs:
+      - job: terraform_plan
+        displayName: Terraform Plan
+        workspace:
+          clean: all
+        steps:
+          - task: DownloadSecureFile@1
+            name: tf_creds
+            inputs:
+              secureFile: ${{ parameters.tf_creds }}
+
+          - bash: |
+              mkdir -p ~/.terraform.d
+            displayName: Setup Creds Dest
+
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: $(Agent.TempDirectory)
+              contents: ${{ parameters.tf_creds }}
+              targetFolder: "~/.terraform.d"
+
+          - task: Bash@3
+            displayName: terraform init
+            inputs:
+              targetType: filePath
+              filePath: scripts/terraform_init.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+            env:
+              TF_IN_AUTOMATION: true
+              TF_WORKSPACE: ${{ parameters.tf_workspace }}
+
+          - task: Bash@3
+            displayName: terraform plan
+            name: plan # needed for result later
+            inputs:
+              targetType: filePath
+              filePath: scripts/terraform_plan.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+              arguments: >
+                -var pguser=$(pguser)
+                -var pgpassword=$(pgpassword)
+                -out tfplan.tfout
+            env:
+              TF_IN_AUTOMATION: true
+              TF_WORKSPACE: ${{ parameters.tf_workspace }}
+
+          - task: CopyFiles@2
+            displayName: stage files to $(Build.StagingDirectory)
+            condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+            inputs:
+              sourceFolder: $(System.DefaultWorkingDirectory)
+              contents: |
+                terraform/**/*
+                modules/**/*
+                scripts/**/*
+                !pipelines/**/*
+                !.gitignore
+                !**/.git/**/*
+                !terraform/.terraform/**/*
+              targetFolder: $(Build.StagingDirectory)
+              cleanTargetFolder: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: upload tf artifact
+            condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+            inputs:
+              artifactName: terraform-plan
