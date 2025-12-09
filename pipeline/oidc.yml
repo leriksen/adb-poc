@@ -1,0 +1,8 @@
+pool: ubuntu-latest
+
+stages:
+  - stage: oidc
+    jobs:
+      - job: oidc
+        steps:
+          - script: echo oidc

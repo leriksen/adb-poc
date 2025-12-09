@@ -1,25 +1,25 @@
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "nsg_name": {
-      "type": "String"
-    },
-    "location": {
-      "type": "String"
-    }
-  },
-  "variables": {},
-  "resources": [
-    {
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2022-11-01",
-      "name": "[parameters('nsg_name')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [],
-      "properties": {
-        "securityRules": []
-      }
-    }
-  ]
-}
+//{
+//  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+//  "contentVersion": "1.0.0.0",
+//  "parameters": {
+//    "nsg_name": {
+//      "type": "String"
+//    },
+//    "location": {
+//      "type": "String"
+//    }
+//  },
+//  "variables": {},
+//  "resources": [
+//    {
+//      "type": "Microsoft.Network/networkSecurityGroups",
+//      "apiVersion": "2022-11-01",
+//      "name": "[parameters('nsg_name')]",
+//      "location": "[parameters('location')]",
+//      "dependsOn": [],
+//      "properties": {
+//        "securityRules": []
+//      }
+//    }
+//  ]
+//}

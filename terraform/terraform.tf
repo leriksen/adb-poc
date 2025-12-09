@@ -1,30 +1,32 @@
 terraform {
-  required_version = "~>1.4.0"
+  required_version = "~>1.0"
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "3.47.0"
+      version = "~>4.0"
     }
     azuread = {
       source = "hashicorp/azuread"
-      version = "2.36.0"
+      version = "~>3.0"
     }
 
     databricks = {
       source = "databricks/databricks"
-      version = "1.15.0"
+      version = "~>1.0"
     }
 
     external = {
       source = "hashicorp/external"
-      version = "2.3.1"
+      version = "~>2.0"
     }
 
     null = {
       source = "hashicorp/null"
-      version = "3.2.1"
+      version = "~>3.0"
     }
   }
 
-  backend azurerm {}
+  backend "local" {
+    path = "./terraform.tfstate"
+  }
 }
