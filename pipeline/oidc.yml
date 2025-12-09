@@ -12,3 +12,12 @@ stages:
           - script: |
               databricks version
             displayName: Show Databricks version
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: wif
+              useGlobalConfig: true
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                export DATABRICKS_HOST=https://adb-2959284368339070.10.azuredatabricks.net
+                databricks clusters list
