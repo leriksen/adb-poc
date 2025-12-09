@@ -21,3 +21,4 @@ stages:
               inlineScript: |
                 export DATABRICKS_HOST=https://adb-2959284368339070.10.azuredatabricks.net
                 databricks clusters list
+                databricks workspace list
